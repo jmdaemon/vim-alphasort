@@ -52,7 +52,6 @@ function! alphasort#SortImports(start, end)
     "echo (quoted)
 
     " Join the lines together
-    "let joined = join(quoted, '\n')
     let joined = join(lines, '\n')
     echo "Joined Lines:"
     echo (joined)
@@ -74,8 +73,10 @@ function! alphasort#SortImports(start, end)
     " Replace the selected lines with the alphabetized lines
     let line_start = s:get_visual_start()
     let line_end = s:get_visual_end()
+    execute line_start . "," . line_end . "s/" . joined ."/" . join(alphabetized, "\r"). "/g"
+    "substitute(joined, join(alphabetized, "\n"), 'g')
 
     "call setline(line_start, line_end, alphabetized)
-    execute line_start . "," . line_end . "s/" . joined ."/" . alphabetized . "/g"
+    "execute line_start . "," . line_end . "s/" . joined ."/" . join(alphabetized, "\n"). "/g"
     "substitute (lines, alphabetized, "g")
 endfunction
