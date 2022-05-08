@@ -28,17 +28,17 @@ endfunction
 function! alphasort#SortImports(start, end)
     " Get all the lines
     let lines = s:get_visual_selection()
+    echo "Selected Lines:"
     echo (lines)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
+
     " Alphabetize the lines
-    "let alphabetized = system('alphabetize' . ' ' . lines)
-    "let alphabetized = call system('alphabetize' .. ' ' .. lines)
-    "let alphabetized = execute "!" . 'alphabetize' . ' ' . lines
     let alphabetized = ! 'alphabetize' . ' ' . lines
+    echo "Alphabetized Lines:"
     echo (alphabetized)
 
-    " Now replace the selected 
+    " Replace the selected lines with the alphabetized lines
     "call setline('.', alphabetized)
 endfunction
