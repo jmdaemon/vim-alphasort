@@ -34,11 +34,17 @@ function! alphasort#SortImports(start, end)
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
+    " Build the command
+    let command = 'alphabetize' . ' ' . lines
+    echo "Command:"
+    echo(command)
+
     " Alphabetize the lines
-    let alphabetized = ! 'alphabetize' . ' ' . lines
+    let alphabetized = ! command
     echo "Alphabetized Lines:"
     echo (alphabetized)
 
     " Replace the selected lines with the alphabetized lines
     "call setline('.', alphabetized)
+    substitute (lines, alphabetized, "g")
 endfunction
