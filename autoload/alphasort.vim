@@ -28,12 +28,19 @@ endfunction
 function! alphasort#SortImports(start, end)
     " Get all the lines
     let lines = s:get_visual_selection()
+    echo (lines)
 
+    " Clear the screen without a Press ENTER... prompt
+    silent !clear
     " Alphabetize the lines
-    let alphabetized = system('alphabetize' . ' ' . lines)
+    "let alphabetized = system('alphabetize' . ' ' . lines)
+    "let alphabetized = call system('alphabetize' .. ' ' .. lines)
+    "let alphabetized = execute "!" . 'alphabetize' . ' ' . lines
+    let alphabetized = ! 'alphabetize' . ' ' . lines
+    echo (alphabetized)
 
     " Now replace the selected 
-    setline('.', alphabetize)
+    "call setline('.', alphabetized)
 
     "if a:0 > 0 && (a:1 == "d" || a:1 == "t")
         "if a:1 == "d"

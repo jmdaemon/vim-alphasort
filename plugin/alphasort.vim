@@ -10,6 +10,4 @@ endif
 let g:loaded_alphasort = 1
 
 " Plugin Functions
-"command! -nargs=0 SortImports call alphasort#SortImports()
-"command! -range SortImports <line1>,<line2> call alphasort#SortImports()
 command! -range SortImports call alphasort#SortImports(<line1>, <line2>)
