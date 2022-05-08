@@ -1,4 +1,15 @@
 " Helper Functions
+function! s:get_visual_start()
+    " Get the first selected line in visual mode
+    let [line_start, column_start] = getpos("'<")[1:2]
+    return line_start
+endfunction
+
+function! s:get_visual_end()
+    " Get the last selected line in visual mode
+    let [line_end, column_end] = getpos("'>")[1:2]
+    return line_end
+endfunction
 
 function! s:get_visual_selection()
     " Get all visual mode selected lines
@@ -15,9 +26,15 @@ endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
-    let lines = s#get_visual_selection()
     " Get all the lines
-    call system('alphabetize' . ' ' . lines)
+    let lines = s#get_visual_selection()
+
+    " Alphabetize the lines
+    let alphabetized = system('alphabetize' . ' ' . lines)
+
+    " Now replace the selected 
+    setline('.', alphabetize)
+
     "if a:0 > 0 && (a:1 == "d" || a:1 == "t")
         "if a:1 == "d"
             "echo strftime("%b %d")
