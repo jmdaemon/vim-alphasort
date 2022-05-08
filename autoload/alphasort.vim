@@ -26,51 +26,74 @@ function! s:get_visual_selection()
     return lines
 endfunction
 
-function! alphasort#QuoteLines(lines)
-    let quoted = []
-    let i = 0
-    for i in lines
-        let line = "\'" . lines[i] "\'"
-        quoted + [line]
-    endfor
-    return quoted
-endfunction
+"function! alphasort#QuoteLines(lines)
+    "let quoted = []
+    "let i = ''
+    "for i in len(lines)
+        "let line = "\'" . get(lines, i) . "\'"
+        "quoted + [line]
+    "endfor
+    "return quoted
+"endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Sorts all selected import statements
 
     " Get all the lines
-    "let lines = s:get_visual_selection()
-    "echo "Selected Lines:"
-    "echo (lines)
-
-    let linesArray = s:get_visual_selection()
+    let lines = s:get_visual_selection()
     echo "Selected Lines:"
-    echo (linesArray)
-
-    let lines = alphasort#QuoteLines(linesArray)
-    echo "Quoted Lines:"
     echo (lines)
 
+    " Quote the variables
+    "let quoted = s:quote_lines(lines)
+    "let quoted = alphasort#QuoteLines(lines)
+    "echo "Quoted Lines:"
+    "echo (quoted)
+
+    " Join the lines together
+    "let joined = join(quoted, '\n')
+    let joined = join(lines, '\n')
+    echo "Joined Lines:"
+    echo (joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Alphabetize the lines
     "let alphabetized = systemlist(command)
-    let alphabetized = ! 'alphabetize' . ' ' . lines
+    "let alphabetized = ! 'alphabetize' . ' ' . joined
+    "let alphabetized = split(! 'alphabetize' . ' ' . joined, '\n')
+    "let alphabetized = split(! 'alphabetize' . ' ' . joined)
+    let alphabetized = split((! 'alphabetize' . ' ' . joined), '\\n')
     echo "Alphabetized Lines:"
     echo (alphabetized)
+    
+    let length = len(alphabetized)
+    
+    " Remove the "1 " in front of the first element
+    let first_elem = get(alphabetized, 0)
+    echo "First Element"
+    echo(first_elem)
+    "substitute(first_elem, '1 ', '', 'g')
+    "execute('s/' . '1 ' . '/' . '' . '/' . 'g')
+    "execute('s/' . '[1 ]' . '/' . '' . '/' . 'g')
+    "substitute(first_elem, '1 ', '', 'g')
+    "alphabetized[0] = first_elem
+    "let alphabetized = first_elem + alphabetized[1:len(alphabetized)]
+    "let sanitized = [first_elem] + alphabetized[1:length]
+    let sanitized = [substitute(first_elem, '1 ', '', 'g')] + alphabetized[1:length]
+    echo "Sanitized Lines:"
+    echo (sanitized)
 
     " Sanitize the output
-    substitute(alphabetized, "\n", '\n', 'g')
+    "substitute(alphabetized, "\n", '\n', 'g')
 
     " Replace the selected lines with the alphabetized lines
     let line_start = s:get_visual_start()
     let line_end = s:get_visual_end()
 
     "call setline(line_start, line_end, alphabetized)
-    execute line_start . "," . line_end . "s/" . lines ."/" . alphabetized . "/g"
+    execute line_start . "," . line_end . "s/" . joined ."/" . alphabetized . "/g"
     "substitute (lines, alphabetized, "g")
 endfunction
