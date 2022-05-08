@@ -61,27 +61,15 @@ function! alphasort#SortImports(start, end)
     silent !clear
 
     " Alphabetize the lines
-    "let alphabetized = systemlist(command)
-    "let alphabetized = ! 'alphabetize' . ' ' . joined
-    "let alphabetized = split(! 'alphabetize' . ' ' . joined, '\n')
-    "let alphabetized = split(! 'alphabetize' . ' ' . joined)
     let alphabetized = split((! 'alphabetize' . ' ' . joined), '\\n')
     echo "Alphabetized Lines:"
     echo (alphabetized)
     
-    "let length = len(alphabetized)
-    
     " Remove the "1 " in front of the first element
-    let first_elem = get(alphabetized, 0)
-    "first_elem = substitute(first_elem, '1 ', '', 'g')
-
-    "let sanitized = [first_elem] + alphabetized[1:length]
-    let sanitized = [substitute(first_elem, '1 ', '', 'g')] + alphabetized[1:len(alphabetized)]
+    let first_elem = substitute(get(alphabetized, 0), '1 ', '', 'g')
+    let alphabetized = [first_elem] + alphabetized[1:len(alphabetized)]
     echo "Sanitized Lines:"
-    echo (sanitized)
-
-    " Sanitize the output
-    "substitute(alphabetized, "\n", '\n', 'g')
+    echo (alphabetized)
 
     " Replace the selected lines with the alphabetized lines
     let line_start = s:get_visual_start()
