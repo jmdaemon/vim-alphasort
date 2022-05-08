@@ -27,7 +27,7 @@ endfunction
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Get all the lines
-    let lines = s#get_visual_selection()
+    let lines = s:get_visual_selection()
 
     " Alphabetize the lines
     let alphabetized = system('alphabetize' . ' ' . lines)
