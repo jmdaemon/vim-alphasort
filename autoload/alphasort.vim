@@ -13,6 +13,7 @@ endfunction
 
 function! s:get_visual_selection()
     " Get all visual mode selected lines
+    " Returns the lines selected as an array
     let [line_start, column_start] = getpos("'<")[1:2]
     let [line_end, column_end] = getpos("'>")[1:2]
     let lines = getline(line_start, line_end)
@@ -21,34 +22,49 @@ function! s:get_visual_selection()
     endif
     let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
     let lines[0] = lines[0][column_start - 1:]
-    "return join(lines, "\n")
-    return join(lines, '\n')
+    "return join(lines, '\n')
+    return lines
+endfunction
+
+function! alphasort#QuoteLines(lines)
+    let quoted = []
+    let i = 0
+    for i in lines
+        let line = "\'" . lines[i] "\'"
+        quoted + [line]
+    endfor
+    return quoted
 endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
+    " Sorts all selected import statements
+
     " Get all the lines
-    let lines = s:get_visual_selection()
+    "let lines = s:get_visual_selection()
+    "echo "Selected Lines:"
+    "echo (lines)
+
+    let linesArray = s:get_visual_selection()
     echo "Selected Lines:"
+    echo (linesArray)
+
+    let lines = alphasort#QuoteLines(linesArray)
+    echo "Quoted Lines:"
     echo (lines)
 
-    " Replace ASCII NUL with newlines
-    "substitute(lines, "^@", "\r\n", "")
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
-    " Build the command
-    "let command = 'alphabetize' . ' ' . lines
-    "echo "Command:"
-    "echo(command)
-
     " Alphabetize the lines
     "let alphabetized = systemlist(command)
-    "let alphabetized = ! command
     let alphabetized = ! 'alphabetize' . ' ' . lines
     echo "Alphabetized Lines:"
     echo (alphabetized)
+
+    " Sanitize the output
+    substitute(alphabetized, "\n", '\n', 'g')
 
     " Replace the selected lines with the alphabetized lines
     let line_start = s:get_visual_start()
