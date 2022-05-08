@@ -69,20 +69,14 @@ function! alphasort#SortImports(start, end)
     echo "Alphabetized Lines:"
     echo (alphabetized)
     
-    let length = len(alphabetized)
+    "let length = len(alphabetized)
     
     " Remove the "1 " in front of the first element
     let first_elem = get(alphabetized, 0)
-    echo "First Element"
-    echo(first_elem)
-    "substitute(first_elem, '1 ', '', 'g')
-    "execute('s/' . '1 ' . '/' . '' . '/' . 'g')
-    "execute('s/' . '[1 ]' . '/' . '' . '/' . 'g')
-    "substitute(first_elem, '1 ', '', 'g')
-    "alphabetized[0] = first_elem
-    "let alphabetized = first_elem + alphabetized[1:len(alphabetized)]
+    "first_elem = substitute(first_elem, '1 ', '', 'g')
+
     "let sanitized = [first_elem] + alphabetized[1:length]
-    let sanitized = [substitute(first_elem, '1 ', '', 'g')] + alphabetized[1:length]
+    let sanitized = [substitute(first_elem, '1 ', '', 'g')] + alphabetized[1:len(alphabetized)]
     echo "Sanitized Lines:"
     echo (sanitized)
 
