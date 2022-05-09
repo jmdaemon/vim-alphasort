@@ -106,13 +106,9 @@ function! alphasort#SortImports(start, end)
     
     " Remove the "1 " in front of the first element
     let alphabetized = RemoveCommandLN(unquoted)
-    "let first_elem = substitute(get(unquoted, 0), '1 ', '', 'g')
-    "let alphabetized = [first_elem] + unquoted[1:len(unquoted)]
     echo "Sanitized Lines:"
     echo (alphabetized)
 
     " Replace the selected lines with the alphabetized lines
-    let line_start = s:get_visual_start()
-    let line_end = s:get_visual_end()
-    execute line_start . "," . line_end . "s/" . join(lines, '\n') ."/" . join(alphabetized, "\r"). "/g"
+    execute a:start . "," . a:end . "s/" . join(lines, '\n') ."/" . join(alphabetized, "\r"). "/g"
 endfunction
