@@ -36,7 +36,7 @@ function! Quote(lines)
     return quoted
 endfunction
 
-function Unquote(lines)
+function! Unquote(lines)
     " Removes quotes in a line of text from a list of lines
     let unquoted = []
     for i in a:lines
@@ -44,6 +44,17 @@ function Unquote(lines)
         let unquoted = unquoted + [line]
     endfor
     return unquoted
+endfunction
+
+function! RemoveCommandLN(elems)
+    " Removes the line number associated with the result of a command
+    " Remove the "1 " in front of the first element
+    "let first_elem = substitute(get(elems, 0), '1 ', '', 'g')
+    let first_elem  = get(a:elems, 0)
+    let len_elems   = len(a:elems) 
+    let sanitized   = substitute(first_elem, '1 ', '', 'g')
+    let result = [sanitized] + a:elems[1:len_elems]
+    return result
 endfunction
 
 " Functions for sorting imports
@@ -94,8 +105,9 @@ function! alphasort#SortImports(start, end)
     echo (unquoted)
     
     " Remove the "1 " in front of the first element
-    let first_elem = substitute(get(unquoted, 0), '1 ', '', 'g')
-    let alphabetized = [first_elem] + unquoted[1:len(unquoted)]
+    let alphabetized = RemoveCommandLN(unquoted)
+    "let first_elem = substitute(get(unquoted, 0), '1 ', '', 'g')
+    "let alphabetized = [first_elem] + unquoted[1:len(unquoted)]
     echo "Sanitized Lines:"
     echo (alphabetized)
 
