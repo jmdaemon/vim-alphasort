@@ -26,12 +26,16 @@ function! s:get_visual_selection()
     return lines
 endfunction
 
-"function! alphasort#QuoteLines(lines)
+"function! QuoteLines(lines)
+"function! s:quote_lines(lines)
     "let quoted = []
-    "let i = ''
-    "for i in len(lines)
-        "let line = "\'" . get(lines, i) . "\'"
-        "quoted + [line]
+    ""let i = ''
+    ""for i in len(lines)
+        ""let line = "\'" . get(lines, i) . "\'"
+    "for i in a:lines
+        "let line = "\'" . i . "\'"
+        ""quoted + [line]
+        "let quoted = append(line, quoted)
     "endfor
     "return quoted
 "endfunction
@@ -45,38 +49,102 @@ function! alphasort#SortImports(start, end)
     echo "Selected Lines:"
     echo (lines)
 
+
+    " Escape special character sequences (#, ')
+    let escaped = []
+    for i in lines
+        let line = substitute(i     , '#'   , '\\#' , 'g')
+        let line = substitute(line  , "\'"  , "\\'" , 'g')
+        "let line = substitute(line  , '"'   , '\\"' , 'g')
+        let escaped = escaped + [line]
+    endfor
+    "let escaped = alphasort#QuoteLines(lines)
+    "let escaped = QuoteLines(lines)
+    echo "Escaped Lines:"
+    echo (escaped)
+
     " Quote the variables
     "let quoted = s:quote_lines(lines)
-    "let quoted = alphasort#QuoteLines(lines)
-    "echo "Quoted Lines:"
-    "echo (quoted)
+    let quoted = []
+    ""for i in lines
+    for i in escaped
+        "let line = substitute(i, "\'", "\\'", 'g')
+        let line = "\'" . i . "\'"
+        ""let line = "\'" . i
+        ""let line = "\'" .. i .. "\'"
+        ""let line = '\' . i . '\'
+        ""let line = '\"' . i . '\"'
+        ""let line = \" . i . \"
+        let quoted = quoted + [line]
+        ""echo(i)
+        ""quoted + [line]
+        ""let quoted = append(line, quoted)
+    endfor
+    ""let quoted = alphasort#QuoteLines(lines)
+    ""let quoted = QuoteLines(lines)
+    echo "Quoted Lines:"
+    echo (quoted)
 
     " Join the lines together
-    let joined = join(lines, '\n')
+    "let joined = join(quoted, '\\n')
+    "let joined = join(lines, '\r')
+    "let joined = join(escaped, '\r')
+    "let joined = join(quoted, '\n')
+    "let joined = join(escaped, '\r')
+    "let joined = join(escaped, ' ')
+    let joined = join(quoted, " ")
+    "let joined = join(escaped, " ")
     echo "Joined Lines:"
     echo (joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
+    " Create the command
+    let command = 'alphabetize' . ' ' . joined
+    echo "Command:"
+    echo (command)
+
     " Alphabetize the lines
-    let alphabetized = split((! 'alphabetize' . ' ' . joined), '\\n')
+    "let alphabetized = split((! 'alphabetize' . ' ' . joined), '\\n')
+    "let alphabetized = split((! 'alphabetize' . ' ' . joined), '\r')
+    "let alphabetized = split((! command), '\\n')
+    "let alphabetized = split((! command), '\\n')
+    "let alphabetized = split((system(['alphabetize', joined])), '\\n')
+    "let alphabetized = split(system(['alphabetize', joined]), '\\n')
+    "let alphabetized = systemlist(['alphabetize', joined)])
+    "let alphabetized = systemlist(['alphabetize', escaped])
+    let alphabetized = systemlist(command)
     echo "Alphabetized Lines:"
     echo (alphabetized)
+
+    " Unquote the lines
+    let unquoted = []
+    for i in alphabetized
+        "let line = substitute(i, "\'\'", "", 'g')
+        "let line = substitute(i, "\\'\\'", "", 'g')
+        let line = substitute(i, "\'\'\'", "", 'g')
+        let unquoted = unquoted + [line]
+        "echo(i)
+        ""quoted + [line]
+        "let quoted = append(line, quoted)
+    endfor
+    echo "Unquoted Lines:"
+    echo (unquoted)
     
     " Remove the "1 " in front of the first element
-    let first_elem = substitute(get(alphabetized, 0), '1 ', '', 'g')
-    let alphabetized = [first_elem] + alphabetized[1:len(alphabetized)]
+    "let first_elem = substitute(get(alphabetized, 0), '1 ', '', 'g')
+    let first_elem = substitute(get(unquoted, 0), '1 ', '', 'g')
+    "let first_elem = substitute(get(alphabetized, 0), '\'1 ', "\'", 'g')
+    "let alphabetized = [first_elem] + alphabetized[1:len(alphabetized)]
+    let alphabetized = [first_elem] + unquoted[1:len(unquoted)]
     echo "Sanitized Lines:"
     echo (alphabetized)
 
     " Replace the selected lines with the alphabetized lines
     let line_start = s:get_visual_start()
     let line_end = s:get_visual_end()
-    execute line_start . "," . line_end . "s/" . joined ."/" . join(alphabetized, "\r"). "/g"
-    "substitute(joined, join(alphabetized, "\n"), 'g')
-
-    "call setline(line_start, line_end, alphabetized)
-    "execute line_start . "," . line_end . "s/" . joined ."/" . join(alphabetized, "\n"). "/g"
-    "substitute (lines, alphabetized, "g")
+    "execute line_start . "," . line_end . "s/" . joined ."/" . join(alphabetized, "\r"). "/g"
+    execute line_start . "," . line_end . "s/" . join(lines, '\n') ."/" . join(alphabetized, "\r"). "/g"
+    "execute line_start . "," . line_end . "s/" . join(lines, '\r') ."/" . join(alphabetized, "\r"). "/g"
 endfunction
