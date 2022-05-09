@@ -56,28 +56,28 @@ function! RemoveCommandLN(elems)
     return result
 endfunction
 
-function! Info(message)
+function! Log(message)
     " Logs a message to the console if in debug mode
     " else outputs nothing
-    "if g:alphasort_debug_mode == 0
-    "if exists("g:alphasort_debug_mode")
     if g:alphasort_debug_mode == 1
         echo(a:message)
-    else
-        " Do nothing
     endif
 endfunction
+
+"function! Info(message)
+    "call Log(message)
+"endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Sorts all selected import statements
-    call Info("Debug Level: ")
-    call Info(g:alphasort_debug_mode)
+    Info("Debug Level: ")
+    Info(g:alphasort_debug_mode)
 
     " Get all the lines
     let lines = s:get_visual_selection()
-    call Info("Selected Lines:")
-    call Info(lines)
+    Info("Selected Lines:")
+    Info(lines)
 
     " Escape special character sequences: #, '
     let escaped = []
@@ -86,41 +86,41 @@ function! alphasort#SortImports(start, end)
         let line = substitute(line  , "\'"  , "\\'" , 'g')
         let escaped = escaped + [line]
     endfor
-    call Info("Escaped Lines:")
-    call Info(escaped)
+    Info("Escaped Lines:")
+    Info(escaped)
 
     " Quote the variables
     let quoted = Quote(lines)
-    call Info("Quoted Lines:")
-    call Info(quoted)
+    Info("Quoted Lines:")
+    Info(quoted)
 
     " Join the lines together
     let joined = join(quoted, " ")
-    call Info("Joined Lines:")
-    call Info(joined)
+    Info("Joined Lines:")
+    Info(joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Create the command
     let command = 'alphabetize' . ' ' . joined
-    call Info("Command:")
-    call Info(command)
+    Info("Command:")
+    Info(command)
 
     " Alphabetize the lines
     let alphabetized = systemlist(command)
-    call Info("Alphabetized Lines:")
-    call Info(alphabetized)
+    Info("Alphabetized Lines:")
+    Info(alphabetized)
 
     " Unquote the lines
     let unquoted = Unquote(alphabetized)
-    call Info("Unquoted Lines:")
-    call Info(unquoted)
+    Info("Unquoted Lines:")
+    Info(unquoted)
     
     " Remove the "1 " in front of the first element
     let alphabetized = RemoveCommandLN(unquoted)
-    call Info("Sanitized Lines:")
-    call Info(alphabetized)
+    Info("Sanitized Lines:")
+    Info(alphabetized)
 
     " Replace the selected lines with the alphabetized lines
     execute a:start . "," . a:end . "s/" . join(lines, '\n') ."/" . join(alphabetized, "\r"). "/g"

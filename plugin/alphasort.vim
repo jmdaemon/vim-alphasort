@@ -12,3 +12,4 @@ let g:alphasort_debug_mode = 0
 
 " Plugin Functions
 command! -range SortImports call alphasort#SortImports(<line1>, <line2>)
+command! -nargs=1 Info call Log(<args>)
