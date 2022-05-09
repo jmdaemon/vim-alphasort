@@ -27,13 +27,23 @@ function! s:get_visual_selection()
 endfunction
 
 function! Quote(lines)
-    " Inserts quotes inbetween a line of text
+    " Inserts quotes inbetween a line of text in a list of lines
     let quoted = []
     for i in a:lines
         let line = "\'" . i . "\'"
         let quoted = quoted + [line]
     endfor
     return quoted
+endfunction
+
+function Unquote(lines)
+    " Removes quotes in a line of text from a list of lines
+    let unquoted = []
+    for i in a:lines
+        let line = substitute(i, "\'\'\'", "", 'g')
+        let unquoted = unquoted + [line]
+    endfor
+    return unquoted
 endfunction
 
 " Functions for sorting imports
@@ -79,11 +89,7 @@ function! alphasort#SortImports(start, end)
     echo (alphabetized)
 
     " Unquote the lines
-    let unquoted = []
-    for i in alphabetized
-        let line = substitute(i, "\'\'\'", "", 'g')
-        let unquoted = unquoted + [line]
-    endfor
+    let unquoted = Unquote(alphabetized)
     echo "Unquoted Lines:"
     echo (unquoted)
     
