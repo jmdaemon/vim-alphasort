@@ -64,10 +64,6 @@ function! Log(message)
     endif
 endfunction
 
-"function! Info(message)
-    "call Log(message)
-"endfunction
-
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Sorts all selected import statements
