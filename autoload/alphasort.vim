@@ -49,22 +49,35 @@ endfunction
 function! RemoveCommandLN(elems)
     " Removes the line number associated with the result of a command
     " Remove the "1 " in front of the first element
-    "let first_elem = substitute(get(elems, 0), '1 ', '', 'g')
     let first_elem  = get(a:elems, 0)
     let len_elems   = len(a:elems) 
     let sanitized   = substitute(first_elem, '1 ', '', 'g')
-    let result = [sanitized] + a:elems[1:len_elems]
+    let result      = [sanitized] + a:elems[1:len_elems]
     return result
+endfunction
+
+function! Info(message)
+    " Logs a message to the console if in debug mode
+    " else outputs nothing
+    "if g:alphasort_debug_mode == 0
+    "if exists("g:alphasort_debug_mode")
+    if g:alphasort_debug_mode == 1
+        echo(a:message)
+    else
+        " Do nothing
+    endif
 endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Sorts all selected import statements
+    call Info("Debug Level: ")
+    call Info(g:alphasort_debug_mode)
 
     " Get all the lines
     let lines = s:get_visual_selection()
-    echo "Selected Lines:"
-    echo (lines)
+    call Info("Selected Lines:")
+    call Info(lines)
 
     " Escape special character sequences: #, '
     let escaped = []
@@ -73,41 +86,41 @@ function! alphasort#SortImports(start, end)
         let line = substitute(line  , "\'"  , "\\'" , 'g')
         let escaped = escaped + [line]
     endfor
-    echo "Escaped Lines:"
-    echo (escaped)
+    call Info("Escaped Lines:")
+    call Info(escaped)
 
     " Quote the variables
     let quoted = Quote(lines)
-    echo "Quoted Lines:"
-    echo (quoted)
+    call Info("Quoted Lines:")
+    call Info(quoted)
 
     " Join the lines together
     let joined = join(quoted, " ")
-    echo "Joined Lines:"
-    echo (joined)
+    call Info("Joined Lines:")
+    call Info(joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Create the command
     let command = 'alphabetize' . ' ' . joined
-    echo "Command:"
-    echo (command)
+    call Info("Command:")
+    call Info(command)
 
     " Alphabetize the lines
     let alphabetized = systemlist(command)
-    echo "Alphabetized Lines:"
-    echo (alphabetized)
+    call Info("Alphabetized Lines:")
+    call Info(alphabetized)
 
     " Unquote the lines
     let unquoted = Unquote(alphabetized)
-    echo "Unquoted Lines:"
-    echo (unquoted)
+    call Info("Unquoted Lines:")
+    call Info(unquoted)
     
     " Remove the "1 " in front of the first element
     let alphabetized = RemoveCommandLN(unquoted)
-    echo "Sanitized Lines:"
-    echo (alphabetized)
+    call Info("Sanitized Lines:")
+    call Info(alphabetized)
 
     " Replace the selected lines with the alphabetized lines
     execute a:start . "," . a:end . "s/" . join(lines, '\n') ."/" . join(alphabetized, "\r"). "/g"
