@@ -99,7 +99,7 @@ function! alphasort#SortImports(start, end)
     silent !clear
 
     " Create the command
-    let command = 'alphabetize' . ' ' . joined
+    let command = 'alphasort' . ' ' . joined
     Info("Command:")
     Info(command)
 
