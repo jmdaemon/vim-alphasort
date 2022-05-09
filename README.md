@@ -7,6 +7,9 @@ program import statements so I wrote one myself.
 
 ## Install
 
+Note that in order to use this program you must have `alphabetize` installed.
+You can install it [here](https://github.com/jmdaemon/alphabetize).
+
 ### Vim-Plug
 
 To install with `vim-plug`, put this in your `.vimrc` file:
