@@ -26,19 +26,15 @@ function! s:get_visual_selection()
     return lines
 endfunction
 
-"function! QuoteLines(lines)
-"function! s:quote_lines(lines)
-    "let quoted = []
-    ""let i = ''
-    ""for i in len(lines)
-        ""let line = "\'" . get(lines, i) . "\'"
-    "for i in a:lines
-        "let line = "\'" . i . "\'"
-        ""quoted + [line]
-        "let quoted = append(line, quoted)
-    "endfor
-    "return quoted
-"endfunction
+function! Quote(lines)
+    " Inserts quotes inbetween a line of text
+    let quoted = []
+    for i in a:lines
+        let line = "\'" . i . "\'"
+        let quoted = quoted + [line]
+    endfor
+    return quoted
+endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
@@ -60,13 +56,7 @@ function! alphasort#SortImports(start, end)
     echo (escaped)
 
     " Quote the variables
-    let quoted = []
-    for i in escaped
-        let line = "\'" . i . "\'"
-        let quoted = quoted + [line]
-    endfor
-    ""let quoted = alphasort#QuoteLines(lines)
-    ""let quoted = QuoteLines(lines)
+    let quoted = Quote(lines)
     echo "Quoted Lines:"
     echo (quoted)
 
