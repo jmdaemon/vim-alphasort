@@ -56,6 +56,10 @@ function! RemoveCommandLN(elems)
     return result
 endfunction
 
+function! EscapeLB(text)
+    return substitute(a:text, '\['   , '\\\[' , 'g')
+endfunction
+
 function! Log(message)
     " Logs a message to the console if in debug mode
     " else outputs nothing
@@ -64,21 +68,52 @@ function! Log(message)
     endif
 endfunction
 
-function! InfoLogVar(message, var)
+"function! LogVar(args)
+"function! LogVar(...)
+"function! LogVar(message, ...)
     "  Log a message and a variable to the console
-    Info(message . ":")
-    Info(var)
-endfunction
+
+    "echo(a:0)
+    "Info(a:1 . ":")
+    "Info(a:2)
+
+    "let message = split(a:args' ')[0]
+    "let var = split(a:args, ' ')[1]
+    "Info(message . ":")
+    "Info(var)
+
+    "let message = split(a:args, '\n')[0]
+    "let var = split(a:args, '\n')[1]
+
+    "let message = split(a:args, '\,')[0]
+    "let var = split(a:args, '\,')[1]
+
+    "Info(message . ":")
+    "Info(var)
+
+    "for arg in a:args
+        "Info(arg)
+    "endfor
+
+    "Info(message . ":")
+    " TODO Replace with loop
+    "for arg in a:args
+        "Info(arg)
+    "endfor
+    "Info(a:1)
+"endfunction
 
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Sorts all selected import statements
-    Info("Debug Level: ")
+    Info("Debug Level:")
     Info(g:alphasort_debug_mode)
+    "InfoLogVar("Debug Level", g:alphasort_debug_mode)
 
     " Get all the lines
     let lines = s:get_visual_selection()
-    InfoLogVar("Selected Lines", lines)
+    Info("Selected Lines:")
+    Info(lines)
 
     " Escape special character sequences: #, ', [
     let escaped = []
@@ -86,49 +121,53 @@ function! alphasort#SortImports(start, end)
         " TODO Add support for comments
         let line = substitute(i     , '#'   , '\\#' , 'g')
         let line = substitute(line  , "\'"  , "\\'" , 'g')
-        let line = substitute(line  , '\['   , '\\\[' , 'g')
+        let line = EscapeLB(line)
         let escaped = escaped + [line]
     endfor
-    InfoLogVar("Escaped Lines", escaped)
+    Info("Escaped Lines:")
+    Info(escaped)
 
-    " Quote the variables
-    "let quoted = Quote(lines)
     let quoted = Quote(escaped)
-    LogDumpVar("Quoted Lines", quoted) 
+    Info("Quoted Lines:") 
+    Info(quoted)
 
-    " Join the lines together
     let joined = join(quoted, " ")
-    LogDumpVar("Joined Lines", joined)
+    Info("Joined Lines:")
+    Info(joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
-    " Create the command
+    " Format the command to alphasort
     let command = 'alphasort' . ' ' . joined
-    LogDumpVar("Command", command)
+    Info("Command:")
+    Info(command)
 
-    " Alphabetize the lines
+    " Retrieve the alphabetized lines
     let alphabetized = systemlist(command)
-    LogDumpVar("Alphabetized Lines", alphabetized)
+    Info("Alphabetized Lines:")
+    Info(alphabetized)
 
-    " Unquote the lines
     let unquoted = Unquote(alphabetized)
-    LogDumpVar("Unquoted Lines", unquoted)
+    Info("Unquoted Lines:")
+    Info(unquoted)
     
     " Remove the "1 " in front of the first element
-    let alphabetized = RemoveCommandLN(unquoted)
-    LogDumpVar("Sanitized Lines", alphabetized)
+    let nolinenums = RemoveCommandLN(unquoted)
+    Info("Sanitized Lines:")
+    Info(nolinenums)
     
     let matched = join(lines, '\n')
-    LogDumpVar("Matched Lines", matched)
+    Info("Matched Lines:")
+    Info(matched)
 
-    let replaced = join(alphabetized, "\r")
-    LogDumpVar("Replaced Lines", replaced)
+    let replaced = join(nolinenums, "\r")
+    Info("Replaced Lines:")
+    Info(replaced)
     
-    let replace_command = a:start . "," . a:end . "s/" . substitute(matched, '\[', '\\\[', 'g')."/" . replaced. "/g"
-    LogDumpVar("Replace Command", replace_command)
-
-    " Replace the selected lines with the alphabetized lines
-    "execute a:start . "," . a:end . "s/" . matched ."/" . replaced. "/g"
+    " Replace the selected lines
+    let replace_command = a:start . "," . a:end . "s/" . EscapeLB(matched) ."/" . replaced. "/g"
+    Info("Replace Command:")
+    Info(replace_command)
     execute replace_command
 endfunction
