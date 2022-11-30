@@ -64,6 +64,12 @@ function! Log(message)
     endif
 endfunction
 
+function! InfoLogVar(message, var)
+    "  Log a message and a variable to the console
+    Info(message . ":")
+    Info(var)
+endfunction
+
 " Functions for sorting imports
 function! alphasort#SortImports(start, end)
     " Sorts all selected import statements
@@ -72,102 +78,55 @@ function! alphasort#SortImports(start, end)
 
     " Get all the lines
     let lines = s:get_visual_selection()
-    Info("Selected Lines:")
-    Info(lines)
+    InfoLogVar("Selected Lines", lines)
 
-    " Escape special character sequences: #, '
+    " Escape special character sequences: #, ', [
     let escaped = []
     for i in lines
         " TODO Add support for comments
         let line = substitute(i     , '#'   , '\\#' , 'g')
-        "let line = substitute(line  , '['   , '\\[' , 'g')
         let line = substitute(line  , "\'"  , "\\'" , 'g')
         let line = substitute(line  , '\['   , '\\\[' , 'g')
-        "let line = substitute(line  , '\['   , '\\\\[' , 'ge')
-
-        "let line = substitute(line  , '\['   , '\\\[' , 'ge')
-        "let line = substitute(line  , '['   , '\\\\\[' , 'ge')
-        "let line = substitute(line  , '['   , '\\\\[' , 'ge')
-        "let line = substitute(line  , '['   , '\\\[' , 'ge')
-        "let line = substitute(line  , '['   , (&magic '[') , 'ge')
-        
-        "let line = substitute(line  , '([|])'   , '\\1' , 'g')
-        "let line = substitute(line  , '\(\[\|\]\)'   , '\\\1' , 'g')
-        "let line = substitute(line  , "\(\[\|\]\)"   , "\\\1" , 'g')
-
-        "let line = substitute(line  , '\'   , '\\' , 'g')
-
-        "let line = substitute(line  , '['   , '\\[' , 'g')
-        "let line = substitute(line  , ']'   , '\\]' , 'g')
-        "let line = substitute(line  , "\]"   , '\\]' , 'g')
-
-
-        "let line = smagic(line , '')
-        "let line = substitute(line  , '\m['   , '\m\[' , 'g')
-
-        "let line = substitute(line  , ','   , '\,' , 'g')
-        "let line = substitute(line  , '{'   , '\\{' , 'g')
-        "let line = substitute(line  , '}'   , '\\}' , 'g')
-
-
-        "let line = substitute(line  , ','   , '\\,' , 'g')
-        "let line = substitute(line  , '{'   , '\\{' , 'g')
-        "let line = substitute(line  , '}'   , '\\}' , 'g')
-
-        " Escapes quotes
-        "let line = substitute(line, '\\\@<!"', '\\"', 'g')
-        "let line = substitute(line  , '"'  , '\"' , 'g')
         let escaped = escaped + [line]
     endfor
-    Info("Escaped Lines:")
-    Info(escaped)
+    InfoLogVar("Escaped Lines", escaped)
 
     " Quote the variables
     "let quoted = Quote(lines)
     let quoted = Quote(escaped)
-    Info("Quoted Lines:")
-    Info(quoted)
+    LogDumpVar("Quoted Lines", quoted) 
 
     " Join the lines together
     let joined = join(quoted, " ")
-    Info("Joined Lines:")
-    Info(joined)
+    LogDumpVar("Joined Lines", joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Create the command
     let command = 'alphasort' . ' ' . joined
-    Info("Command:")
-    Info(command)
+    LogDumpVar("Command", command)
 
     " Alphabetize the lines
     let alphabetized = systemlist(command)
-    Info("Alphabetized Lines:")
-    Info(alphabetized)
+    LogDumpVar("Alphabetized Lines", alphabetized)
 
     " Unquote the lines
     let unquoted = Unquote(alphabetized)
-    Info("Unquoted Lines:")
-    Info(unquoted)
+    LogDumpVar("Unquoted Lines", unquoted)
     
     " Remove the "1 " in front of the first element
     let alphabetized = RemoveCommandLN(unquoted)
-    Info("Sanitized Lines:")
-    Info(alphabetized)
+    LogDumpVar("Sanitized Lines", alphabetized)
     
     let matched = join(lines, '\n')
-    Info("Matched Lines:")
-    Info(matched)
+    LogDumpVar("Matched Lines", matched)
 
     let replaced = join(alphabetized, "\r")
-    Info("Replaced Lines:")
-    Info(replaced)
+    LogDumpVar("Replaced Lines", replaced)
     
     let replace_command = a:start . "," . a:end . "s/" . substitute(matched, '\[', '\\\[', 'g')."/" . replaced. "/g"
-    Info("Replace Command:")
-    Info(replace_command)
-    
+    LogDumpVar("Replace Command", replace_command)
 
     " Replace the selected lines with the alphabetized lines
     "execute a:start . "," . a:end . "s/" . matched ."/" . replaced. "/g"
