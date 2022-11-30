@@ -1,6 +1,6 @@
 " Title:        Vim-AlphaSort
 " Description:  Lexicographically sorts selected lines
-" Last Change:  2022-05-07
+" Last Change:  2022-11-30
 " Maintainer:   Joseph Diza <josephm.diza@gmail.com>
 
 " Load the alphasort plugin
