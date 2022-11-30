@@ -78,15 +78,53 @@ function! alphasort#SortImports(start, end)
     " Escape special character sequences: #, '
     let escaped = []
     for i in lines
+        " TODO Add support for comments
         let line = substitute(i     , '#'   , '\\#' , 'g')
+        "let line = substitute(line  , '['   , '\\[' , 'g')
         let line = substitute(line  , "\'"  , "\\'" , 'g')
+        let line = substitute(line  , '\['   , '\\\[' , 'g')
+        "let line = substitute(line  , '\['   , '\\\\[' , 'ge')
+
+        "let line = substitute(line  , '\['   , '\\\[' , 'ge')
+        "let line = substitute(line  , '['   , '\\\\\[' , 'ge')
+        "let line = substitute(line  , '['   , '\\\\[' , 'ge')
+        "let line = substitute(line  , '['   , '\\\[' , 'ge')
+        "let line = substitute(line  , '['   , (&magic '[') , 'ge')
+        
+        "let line = substitute(line  , '([|])'   , '\\1' , 'g')
+        "let line = substitute(line  , '\(\[\|\]\)'   , '\\\1' , 'g')
+        "let line = substitute(line  , "\(\[\|\]\)"   , "\\\1" , 'g')
+
+        "let line = substitute(line  , '\'   , '\\' , 'g')
+
+        "let line = substitute(line  , '['   , '\\[' , 'g')
+        "let line = substitute(line  , ']'   , '\\]' , 'g')
+        "let line = substitute(line  , "\]"   , '\\]' , 'g')
+
+
+        "let line = smagic(line , '')
+        "let line = substitute(line  , '\m['   , '\m\[' , 'g')
+
+        "let line = substitute(line  , ','   , '\,' , 'g')
+        "let line = substitute(line  , '{'   , '\\{' , 'g')
+        "let line = substitute(line  , '}'   , '\\}' , 'g')
+
+
+        "let line = substitute(line  , ','   , '\\,' , 'g')
+        "let line = substitute(line  , '{'   , '\\{' , 'g')
+        "let line = substitute(line  , '}'   , '\\}' , 'g')
+
+        " Escapes quotes
+        "let line = substitute(line, '\\\@<!"', '\\"', 'g')
+        "let line = substitute(line  , '"'  , '\"' , 'g')
         let escaped = escaped + [line]
     endfor
     Info("Escaped Lines:")
     Info(escaped)
 
     " Quote the variables
-    let quoted = Quote(lines)
+    "let quoted = Quote(lines)
+    let quoted = Quote(escaped)
     Info("Quoted Lines:")
     Info(quoted)
 
@@ -117,7 +155,21 @@ function! alphasort#SortImports(start, end)
     let alphabetized = RemoveCommandLN(unquoted)
     Info("Sanitized Lines:")
     Info(alphabetized)
+    
+    let matched = join(lines, '\n')
+    Info("Matched Lines:")
+    Info(matched)
+
+    let replaced = join(alphabetized, "\r")
+    Info("Replaced Lines:")
+    Info(replaced)
+    
+    let replace_command = a:start . "," . a:end . "s/" . substitute(matched, '\[', '\\\[', 'g')."/" . replaced. "/g"
+    Info("Replace Command:")
+    Info(replace_command)
+    
 
     " Replace the selected lines with the alphabetized lines
-    execute a:start . "," . a:end . "s/" . join(lines, '\n') ."/" . join(alphabetized, "\r"). "/g"
+    "execute a:start . "," . a:end . "s/" . matched ."/" . replaced. "/g"
+    execute replace_command
 endfunction
