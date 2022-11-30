@@ -92,40 +92,40 @@ function! alphasort#SortImports(start, end)
         " Append to list
         let escaped = escaped + [line]
     endfor
-    LogVar("Escaped Lines", escaped)
+    call LogVar("Escaped Lines", escaped)
 
     let quoted = Quote(escaped)
-    LogVar("Quoted Lines", quoted)
+    call LogVar("Quoted Lines", quoted)
 
     let joined = join(quoted, " ")
-    LogVar("Joined Lines", joined)
+    call LogVar("Joined Lines", joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Format the command to alphasort
     let command = 'alphasort' . ' ' . joined
-    LogVar("Command", command)
+    call LogVar("Command", command)
 
     " Retrieve the alphabetized lines
     let alphabetized = systemlist(command)
-    LogVar("Alphabetized Lines", alphabetized)
+    call LogVar("Alphabetized Lines", alphabetized)
 
     let unquoted = Unquote(alphabetized)
-    LogVar("Unquoted Lines", unquoted)
+    call LogVar("Unquoted Lines", unquoted)
     
     " Remove the "1 " in front of the first element
     let nolinenums = RemoveCommandLN(unquoted)
-    LogVar("Sanitized Lines", nolinenums)
+    call LogVar("Sanitized Lines", nolinenums)
     
     let matched = join(lines, '\n')
-    LogVar("Matched Lines", matched)
+    call LogVar("Matched Lines", matched)
 
     let replaced = join(nolinenums, "\r")
-    LogVar("Replaced Lines", replaced)
+    call LogVar("Replaced Lines", replaced)
     
     " Replace the selected lines
     let replace_command = a:start . "," . a:end . "s/" . EscapeLB(matched) ."/" . replaced. "/g"
-    LogVar("Replace Command", replace_command)
+    call LogVar("Replace Command", replace_command)
     execute replace_command
 endfunction
