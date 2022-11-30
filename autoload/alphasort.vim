@@ -68,52 +68,19 @@ function! Log(message)
     endif
 endfunction
 
-"function! LogVar(args)
-"function! LogVar(...)
-"function! LogVar(message, ...)
-    "  Log a message and a variable to the console
+function! LogVar(text, var)
+    Info(a:text . ":")
+    Info(a:var)
+endfunction
 
-    "echo(a:0)
-    "Info(a:1 . ":")
-    "Info(a:2)
-
-    "let message = split(a:args' ')[0]
-    "let var = split(a:args, ' ')[1]
-    "Info(message . ":")
-    "Info(var)
-
-    "let message = split(a:args, '\n')[0]
-    "let var = split(a:args, '\n')[1]
-
-    "let message = split(a:args, '\,')[0]
-    "let var = split(a:args, '\,')[1]
-
-    "Info(message . ":")
-    "Info(var)
-
-    "for arg in a:args
-        "Info(arg)
-    "endfor
-
-    "Info(message . ":")
-    " TODO Replace with loop
-    "for arg in a:args
-        "Info(arg)
-    "endfor
-    "Info(a:1)
-"endfunction
-
-" Functions for sorting imports
 function! alphasort#SortImports(start, end)
-    " Sorts all selected import statements
-    Info("Debug Level:")
-    Info(g:alphasort_debug_mode)
-    "InfoLogVar("Debug Level", g:alphasort_debug_mode)
+    " Lexicographically orders all visually selected statements
+
+    call LogVar("Debug Level", g:alphasort_debug_mode)
 
     " Get all the lines
     let lines = s:get_visual_selection()
-    Info("Selected Lines:")
-    Info(lines)
+    call LogVar("Selected Lines", lines)
 
     " Escape special character sequences: #, ', [
     let escaped = []
@@ -122,52 +89,43 @@ function! alphasort#SortImports(start, end)
         let line = substitute(i     , '#'   , '\\#' , 'g')
         let line = substitute(line  , "\'"  , "\\'" , 'g')
         let line = EscapeLB(line)
+        " Append to list
         let escaped = escaped + [line]
     endfor
-    Info("Escaped Lines:")
-    Info(escaped)
+    LogVar("Escaped Lines", escaped)
 
     let quoted = Quote(escaped)
-    Info("Quoted Lines:") 
-    Info(quoted)
+    LogVar("Quoted Lines", quoted)
 
     let joined = join(quoted, " ")
-    Info("Joined Lines:")
-    Info(joined)
+    LogVar("Joined Lines", joined)
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Format the command to alphasort
     let command = 'alphasort' . ' ' . joined
-    Info("Command:")
-    Info(command)
+    LogVar("Command", command)
 
     " Retrieve the alphabetized lines
     let alphabetized = systemlist(command)
-    Info("Alphabetized Lines:")
-    Info(alphabetized)
+    LogVar("Alphabetized Lines", alphabetized)
 
     let unquoted = Unquote(alphabetized)
-    Info("Unquoted Lines:")
-    Info(unquoted)
+    LogVar("Unquoted Lines", unquoted)
     
     " Remove the "1 " in front of the first element
     let nolinenums = RemoveCommandLN(unquoted)
-    Info("Sanitized Lines:")
-    Info(nolinenums)
+    LogVar("Sanitized Lines", nolinenums)
     
     let matched = join(lines, '\n')
-    Info("Matched Lines:")
-    Info(matched)
+    LogVar("Matched Lines", matched)
 
     let replaced = join(nolinenums, "\r")
-    Info("Replaced Lines:")
-    Info(replaced)
+    LogVar("Replaced Lines", replaced)
     
     " Replace the selected lines
     let replace_command = a:start . "," . a:end . "s/" . EscapeLB(matched) ."/" . replaced. "/g"
-    Info("Replace Command:")
-    Info(replace_command)
+    LogVar("Replace Command", replace_command)
     execute replace_command
 endfunction

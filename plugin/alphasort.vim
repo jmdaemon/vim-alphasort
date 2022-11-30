@@ -19,6 +19,3 @@ endif
 " Plugin Functions
 command! -range SortImports call alphasort#SortImports(<line1>, <line2>)
 command! -nargs=1 Info call Log(<args>)
-"command! -nargs=+ InfoLogVar call LogVar(<f-args>)
-"command! -nargs=+ InfoLogVar call LogVar(<q-args>)
-"command! -nargs=+ InfoLogVar call LogVar(<q-args>)
