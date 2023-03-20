@@ -141,7 +141,7 @@ function! alphasort#SortImports(start, end)
 
     " Since we shelled out for this command, we need to escape
     " the pattern again
-    let no_asterisk     = substitute(matched, '\*'   , '\\*' , 'g')
+    let no_asterisk     = EscapeAsterisk(matched)
     let no_linebreak    = EscapeLB(no_asterisk)
     let matched         = no_linebreak
 
