@@ -60,6 +60,10 @@ function! EscapeLB(text)
     return substitute(a:text, '\['   , '\\\[' , 'g')
 endfunction
 
+function! EscapeAsterisk(text)
+    return substitute(a:text, '\*'   , '\\*' , 'g')
+endfunction
+
 function! Log(message)
     " Logs a message to the console if in debug mode
     " else outputs nothing
@@ -86,7 +90,10 @@ function! alphasort#SortImports(start, end)
     let escaped = []
     for i in lines
         " TODO Add support for comments
-        let line = substitute(i     , '#'   , '\\#' , 'g')
+        "let line = substitute(i     , '#'   , '\\#' , 'g')
+        "let line = substitute(line  , '*'   , '\\*' , 'g')
+        let line = substitute(i     , '\*'   , '\\\*' , 'g')
+        let line = substitute(line  , '#'   , '\\#' , 'g')
         let line = substitute(line  , "\'"  , "\\'" , 'g')
         let line = EscapeLB(line)
         " Append to list
@@ -111,6 +118,19 @@ function! alphasort#SortImports(start, end)
     let alphabetized = systemlist(command)
     call LogVar("Alphabetized Lines", alphabetized)
 
+    " Since we shelled out for this command, we need to escape
+    " the pattern again
+    "let double_escaped = []
+    "for i in alphabetized
+    "    " TODO Add support for comments
+    "    "let line = EscapeAsterisk(i)
+    "    let line = substitute(i, '\*'   , '\\\*' , 'g')
+    "    " Append to list
+    "    let double_escaped = double_escaped + [line]
+    "endfor
+    "call LogVar("Double Escaped Lines", double_escaped)
+
+    "let unquoted = Unquote(double_escaped)
     let unquoted = Unquote(alphabetized)
     call LogVar("Unquoted Lines", unquoted)
     
@@ -121,11 +141,13 @@ function! alphasort#SortImports(start, end)
     let matched = join(lines, '\n')
     call LogVar("Matched Lines", matched)
 
+    let final_escape = substitute(matched, '\*'   , '\\*' , 'g')
+
     let replaced = join(nolinenums, "\r")
     call LogVar("Replaced Lines", replaced)
     
     " Replace the selected lines
-    let replace_command = a:start . "," . a:end . "s/" . EscapeLB(matched) ."/" . replaced. "/g"
+    let replace_command = a:start . "," . a:end . "s/" . EscapeLB(final_escape) ."/" . replaced. "/g"
     call LogVar("Replace Command", replace_command)
     execute replace_command
 endfunction
