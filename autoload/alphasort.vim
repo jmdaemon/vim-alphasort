@@ -118,19 +118,6 @@ function! alphasort#SortImports(start, end)
     let alphabetized = systemlist(command)
     call LogVar("Alphabetized Lines", alphabetized)
 
-    " Since we shelled out for this command, we need to escape
-    " the pattern again
-    "let double_escaped = []
-    "for i in alphabetized
-    "    " TODO Add support for comments
-    "    "let line = EscapeAsterisk(i)
-    "    let line = substitute(i, '\*'   , '\\\*' , 'g')
-    "    " Append to list
-    "    let double_escaped = double_escaped + [line]
-    "endfor
-    "call LogVar("Double Escaped Lines", double_escaped)
-
-    "let unquoted = Unquote(double_escaped)
     let unquoted = Unquote(alphabetized)
     call LogVar("Unquoted Lines", unquoted)
     
@@ -141,13 +128,17 @@ function! alphasort#SortImports(start, end)
     let matched = join(lines, '\n')
     call LogVar("Matched Lines", matched)
 
-    let final_escape = substitute(matched, '\*'   , '\\*' , 'g')
+    " Since we shelled out for this command, we need to escape
+    " the pattern again
+    let no_asterisk     = substitute(matched, '\*'   , '\\*' , 'g')
+    let no_linebreak    = EscapeLB(no_asterisk)
+    let matched         = no_linebreak
 
     let replaced = join(nolinenums, "\r")
     call LogVar("Replaced Lines", replaced)
     
     " Replace the selected lines
-    let replace_command = a:start . "," . a:end . "s/" . EscapeLB(final_escape) ."/" . replaced. "/g"
+    let replace_command = a:start . "," . a:end . "s/" .  matched . "/" . replaced. "/g"
     call LogVar("Replace Command", replace_command)
     execute replace_command
 endfunction
