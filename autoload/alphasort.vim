@@ -87,16 +87,20 @@ function! LogVar(text, var)
     Info(a:var)
 endfunction
 
+function! LogReturn(text, var)
+    " Log a message and return the variable
+    call LogVar(a:text, a:var)
+    return a:var
+endfunction
+
 function! alphasort#SortImports(start, end)
     " Lexicographically orders all visually selected statements
 
     call LogVar("Debug Level", g:alphasort_debug_mode)
 
     " Prepare data for sorting
-
     " Get all the lines
-    let lines = s:get_visual_selection()
-    call LogVar("Selected Lines", lines)
+    let lines = LogReturn("Selected Lines", s:get_visual_selection())
 
     " Escape special character sequences: #, ', [
     let escaped = []
@@ -111,33 +115,23 @@ function! alphasort#SortImports(start, end)
     endfor
     call LogVar("Escaped Lines", escaped)
 
-    let quoted = Quote(escaped)
-    call LogVar("Quoted Lines", quoted)
-
-    let joined = join(quoted, " ")
-    call LogVar("Joined Lines", joined)
+    let quoted          = LogReturn("Quoted Lines", Quote(escaped)) 
+    let joined          = LogReturn("Joined Lines", join(quoted, " "))
 
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
     " Sort the visually selected text
     " Format the command to alphasort
-    let command = 'alphasort' . ' ' . joined
-    call LogVar("Command", command)
+    let command         = LogReturn("Command", 'alphasort' . ' ' . joined)
 
     " Retrieve the alphabetized lines
-    let alphabetized = systemlist(command)
-    call LogVar("Alphabetized Lines", alphabetized)
-
-    let unquoted = Unquote(alphabetized)
-    call LogVar("Unquoted Lines", unquoted)
+    let alphabetized    = LogReturn("Alphabetized Lines", systemlist(command))
+    let unquoted        = LogReturn("Unquoted Lines", Unquote(alphabetized))
     
     " Remove the "1 " in front of the first element
-    let nolinenums = RemoveCommandLN(unquoted)
-    call LogVar("Sanitized Lines", nolinenums)
-    
-    let matched = join(lines, '\n')
-    call LogVar("Matched Lines", matched)
+    let no_linenumbers  = LogReturn("No Line Numbers", RemoveCommandLN(unquoted))
+    let matched         = LogReturn("Matched Lines", join(lines, '\n'))
 
     " Since we shelled out for this command, we need to escape
     " the pattern again
@@ -145,8 +139,7 @@ function! alphasort#SortImports(start, end)
     let no_linebreak    = EscapeLB(no_asterisk)
     let matched         = no_linebreak
 
-    let replaced = join(nolinenums, "\r")
-    call LogVar("Replaced Lines", replaced)
+    let replaced        = LogReturn("Replaced Lines", join(no_linenumbers, "\r"))
     
     " Replace the selected lines
     let replace_command = a:start . "," . a:end . "s/" .  matched . "/" . replaced. "/g"
