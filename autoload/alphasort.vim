@@ -56,6 +56,7 @@ function! RemoveCommandLN(elems)
     return result
 endfunction
 
+" Symbol Escape Functions
 function! EscapeLB(text)
     return substitute(a:text, '\['   , '\\\[' , 'g')
 endfunction
@@ -64,6 +65,15 @@ function! EscapeAsterisk(text)
     return substitute(a:text, '\*'   , '\\*' , 'g')
 endfunction
 
+function! EscapePoundSign(text)
+    return substitute(a:text, '#'   , '\\#' , 'g')
+endfunction
+
+function! EscapeSingleQuote(text)
+    return substitute(a:text  , "\'"  , "\\'" , 'g')
+endfunction
+
+" Logging & Debug Functions
 function! Log(message)
     " Logs a message to the console if in debug mode
     " else outputs nothing
@@ -82,6 +92,8 @@ function! alphasort#SortImports(start, end)
 
     call LogVar("Debug Level", g:alphasort_debug_mode)
 
+    " Prepare data for sorting
+
     " Get all the lines
     let lines = s:get_visual_selection()
     call LogVar("Selected Lines", lines)
@@ -90,11 +102,9 @@ function! alphasort#SortImports(start, end)
     let escaped = []
     for i in lines
         " TODO Add support for comments
-        "let line = substitute(i     , '#'   , '\\#' , 'g')
-        "let line = substitute(line  , '*'   , '\\*' , 'g')
-        let line = substitute(i     , '\*'   , '\\\*' , 'g')
-        let line = substitute(line  , '#'   , '\\#' , 'g')
-        let line = substitute(line  , "\'"  , "\\'" , 'g')
+        let line = EscapeAsterisk(i)
+        let line = EscapePoundSign(line)
+        let line = EscapeSingleQuote(line)
         let line = EscapeLB(line)
         " Append to list
         let escaped = escaped + [line]
@@ -110,6 +120,7 @@ function! alphasort#SortImports(start, end)
     " Clear the screen without a Press ENTER... prompt
     silent !clear
 
+    " Sort the visually selected text
     " Format the command to alphasort
     let command = 'alphasort' . ' ' . joined
     call LogVar("Command", command)
